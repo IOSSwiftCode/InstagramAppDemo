@@ -49,7 +49,7 @@ extension AppDelegate {
     
     private func setupRootViewContrller() {
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        let rootVC = MainViewController()
+        let rootVC = PosteTableViewController()
         let nav = UINavigationController(rootViewController: rootVC)
         self.window?.rootViewController = nav
         self.window?.makeKeyAndVisible()

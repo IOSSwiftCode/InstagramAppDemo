@@ -8,7 +8,9 @@
 
 import UIKit
 
-class MainViewController: UITableViewController {
+class PosteTableViewController: UITableViewController {
+    
+    private var viewModel: TableViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,13 +18,15 @@ class MainViewController: UITableViewController {
         self.view.backgroundColor = .white
         
         addNavigationItems()
-  
+        
+        viewModel = PostTableViewModel(networkLayer: NetworkImpl(), translationLayer: TranslationImpl())
+        
     }
     
 }
 
 //MARK: ADD NAVIGATION ITEM
-extension MainViewController {
+extension PosteTableViewController {
     
     private func addNavigationItems() {
         
