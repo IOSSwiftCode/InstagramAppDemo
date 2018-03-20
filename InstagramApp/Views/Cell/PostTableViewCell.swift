@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class PostTableViewCell: UITableViewCell {
     
@@ -14,7 +15,7 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var usernameLabel: UILabel!
     @IBOutlet weak var postedImgae: UIImageView!
     @IBOutlet weak var postedDescLabel: UILabel!
-    @IBOutlet weak var LikedLabel: UILabel!
+    @IBOutlet weak var likedLabel: UILabel!
     @IBOutlet weak var postedDurationLable: UILabel!
     @IBOutlet weak var commets: UIButton!
     
@@ -25,7 +26,7 @@ class PostTableViewCell: UITableViewCell {
         usernameLabel.text = ""
         postedImgae.image = nil
         postedDescLabel.text = ""
-        LikedLabel.text = ""
+        likedLabel.text = ""
         postedDurationLable.text = ""
         commets.setTitle("", for: .normal)
     }
@@ -34,6 +35,15 @@ class PostTableViewCell: UITableViewCell {
 extension PostTableViewCell {
     
     private func configure(with model: Post) {
+        profileImage.forEach {
+            $0.kf.setImage(with: URL(string: model.user!.profileImage!))
+        }
+        postedImgae.kf.setImage(with: URL(string: model.postImgae!.imageURL!))
+        
+        usernameLabel.text = model.user!.username!
+        likedLabel.text = "\(model.like!.count!) Likes"
+        commets.setTitle("View all \(model.comment!.count!) comments", for: .normal)
+        postedDescLabel.text = model.desc ?? ""
         
     }
 }
@@ -61,10 +71,10 @@ extension PostTableViewCell {
         return bundle.loadNibNamed(PostTableViewCell.cellId, owner: owner, options: nil)?.first as! PostTableViewCell
     }
     
-    public static func dequeue(from tableView: UITableView, for indexPath: IndexPath, with spyCellPresenter: Post) -> PostTableViewCell {
+    public static func dequeue(from tableView: UITableView, for indexPath: IndexPath, with post: Post) -> PostTableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: PostTableViewCell.cellId, for: indexPath) as! PostTableViewCell
-//        cell.configure(with: spyCellPresenter)
+        cell.configure(with: post)
         return cell
     }
     

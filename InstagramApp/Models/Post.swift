@@ -22,7 +22,7 @@ struct Post: Mappable {
     
     mutating func mapping(map: Map) {
         user           <- map["user"]
-        postImgae      <- map["images"]["low_resolution"]
+        postImgae      <- map["images.low_resolution"]
         desc           <- map["caption"]
         like           <- map["likes"]
         comment        <- map["comments"]

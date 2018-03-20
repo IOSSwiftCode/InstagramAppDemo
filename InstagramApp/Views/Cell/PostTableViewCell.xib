@@ -183,8 +183,8 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="LikedLabel" destination="tJp-gy-4fh" id="m3o-9J-2wY"/>
                 <outlet property="commets" destination="2Uc-36-T0g" id="A7f-1f-sWZ"/>
+                <outlet property="likedLabel" destination="tJp-gy-4fh" id="Qhy-GV-8n4"/>
                 <outlet property="postedDescLabel" destination="Ppx-a7-6eS" id="ZNH-8g-6p5"/>
                 <outlet property="postedDurationLable" destination="iyy-yH-JIT" id="Os6-cT-uR0"/>
                 <outlet property="postedImgae" destination="AMt-xY-zPb" id="T2O-HQ-XbY"/>

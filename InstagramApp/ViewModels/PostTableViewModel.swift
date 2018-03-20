@@ -39,8 +39,10 @@ extension PostTableViewModel {
         
         networkLayer?.listPostsFromServer(url: url, param: param, completed: { [weak self] (data) in
             self?.listPosts = self?.translationLayer?.traslateJsonDataToPosts(data)
+            print(self?.listPosts!.data![0].user!.username ?? "")
         })
-        
-        print(listPosts)
     }
+    
+    
+    
 }

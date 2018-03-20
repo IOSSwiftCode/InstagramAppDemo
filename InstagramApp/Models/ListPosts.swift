@@ -9,9 +9,16 @@
 import Foundation
 import ObjectMapper
 
-struct ListPosts {
+struct ListPosts: Mappable {
     
     var data: [Post]?
     var pagination: Pagination?
+    
+    init?(map: Map) {}
+    
+    mutating func mapping(map: Map) {
+        data        <- map["data"]
+        pagination  <- map["pagination"]
+    }
     
 }
