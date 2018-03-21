@@ -16,22 +16,21 @@ class PosteTableViewController: UIViewController {
     private var tableView: UITableView!
     
     private let refreshControl = UIRefreshControl()
+    private var loadingIndicator : LoadingIndicatorView!
+    
     private let disposeBag = DisposeBag()
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = .white
         
-        tableView = UITableView(frame: self.view.frame)
-        
-        self.view.addSubview(tableView)
-        
-        addNavigationItems()
-        
         viewModel = PostTableViewModel(networkLayer: NetworkImpl(), translationLayer: TranslationImpl())
-        
-        
+
+        addNavigationItems()
+        createIndicatorLoading()
         configureTableView()
         bindDataToTableView()
         tableViewCellDidSelected()
@@ -42,20 +41,26 @@ extension PosteTableViewController {
     
     private func configureTableView() {
         
+        tableView = UITableView(frame: self.view.frame)
+        self.view.addSubview(tableView)
+        
         PostTableViewCell.register(with: tableView)
         tableView.separatorStyle = .none
         tableView.rowHeight = 480
         
         // Add Refresh Control to Table View
-        if #available(iOS 10.0, *) {
-            tableView.refreshControl = refreshControl
-        } else {
-            tableView.addSubview(refreshControl)
-        }
+        tableView.addSubview(refreshControl)
+        refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
     }
     
     private func bindDataToTableView() {
         viewModel.posts.asObservable()
+        .filter { [weak self] post in
+            if post.count > 0 {
+                self?.loadingIndicator.stopIndicatorLoading()
+            }
+            return true
+        }
         .bind(to: tableView.rx.items(cellIdentifier: PostTableViewCell.cellId, cellType: PostTableViewCell.self)) {
             row, element, cell in
             
@@ -90,6 +95,20 @@ extension PosteTableViewController {
         
         self.navigationItem.leftBarButtonItem = leftItem
         self.navigationItem.rightBarButtonItem = rightItem
+    }
+    
+    @objc private func pullToRefresh() {
+        viewModel.pullToRefresh()
+        refreshControl.endRefreshing()
+    }
+    
+    private func createIndicatorLoading() {
+        
+        loadingIndicator = LoadingIndicatorView(frame: view.frame)
+        
+        view.addSubview(loadingIndicator)
+        
+        loadingIndicator.startIndicatorLoading()
     }
 }
 

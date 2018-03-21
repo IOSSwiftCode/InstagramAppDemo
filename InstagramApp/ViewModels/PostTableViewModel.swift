@@ -39,7 +39,9 @@ extension PostTableViewModel {
                      "count" : 8] as [String : Any]
         
         networkLayer?.listPostsFromServer(url: url, param: param, completed: { [weak self] (data) in
+            
             self?.listPosts = self?.translationLayer?.traslateJsonDataToPosts(data)
+            
             self?.posts.value = (self?.listPosts?.data)!
             self?.pagination.value = (self?.listPosts?.pagination)!
         })
@@ -48,5 +50,9 @@ extension PostTableViewModel {
     func selectedRow(index: Int) -> Post {
         
         return posts.value[index]
+    }
+    
+    func pullToRefresh() {
+        listAllPosts()
     }
 }
