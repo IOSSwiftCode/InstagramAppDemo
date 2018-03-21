@@ -7,19 +7,20 @@
 //
 
 import Foundation
+import RxSwift
 
-protocol TableViewModel {
+class PostTableViewModel: NSObject {
     
-}
-
-class PostTableViewModel: NSObject, TableViewModel {
+    private var listPosts : ListPosts?
+    private var networkLayer: Network?
+    private var translationLayer: Translation?
     
-    fileprivate var listPosts : ListPosts?
-    fileprivate var networkLayer: Network?
-    fileprivate var translationLayer: Translation?
+    let posts = Variable<[Post]>([])
+    var pagination = Variable<Pagination?>(nil)
     
     init(networkLayer: Network, translationLayer: Translation) {
         super.init()
+        
         self.networkLayer = networkLayer
         self.translationLayer = translationLayer
         
@@ -31,18 +32,21 @@ class PostTableViewModel: NSObject, TableViewModel {
 
 extension PostTableViewModel {
     
-    private func listAllPosts() {
-        
+    private func listAllPosts(){
+
         let url = BaseURL.Post.getData.value
         let param = ["access_token" : "2305280051.c61562d.173fac7d5397411ab13207bf5abda620",
-                     "count" : 2] as [String : Any]
+                     "count" : 8] as [String : Any]
         
         networkLayer?.listPostsFromServer(url: url, param: param, completed: { [weak self] (data) in
             self?.listPosts = self?.translationLayer?.traslateJsonDataToPosts(data)
-            print(self?.listPosts!.data![0].user!.username ?? "")
+            self?.posts.value = (self?.listPosts?.data)!
+            self?.pagination.value = (self?.listPosts?.pagination)!
         })
     }
     
-    
-    
+    func selectedRow(index: Int) -> Post {
+        
+        return posts.value[index]
+    }
 }

@@ -16,9 +16,11 @@ struct Post: Mappable {
     var like: Like?
     var desc: String?
     var comment: Comment?
-    var createdTime: String?
+    var createdTime: Date?
     
     init?(map: Map) {}
+    
+    init() {}
     
     mutating func mapping(map: Map) {
         user           <- map["user"]
@@ -26,6 +28,6 @@ struct Post: Mappable {
         desc           <- map["caption"]
         like           <- map["likes"]
         comment        <- map["comments"]
-        createdTime    <- map["created_time"]
+        createdTime    <- (map["created_time"], DateTransform())
     }
 }

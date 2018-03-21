@@ -16,6 +16,8 @@ struct ListPosts: Mappable {
     
     init?(map: Map) {}
     
+    init() {}
+    
     mutating func mapping(map: Map) {
         data        <- map["data"]
         pagination  <- map["pagination"]

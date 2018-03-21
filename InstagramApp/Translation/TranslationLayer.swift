@@ -19,9 +19,9 @@ class TranslationImpl: Translation {
     
     func traslateJsonDataToPosts(_ data: Data) -> ListPosts {
         
-        var listPosts: ListPosts!
+        var listPosts = ListPosts()
         
-        guard let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as! dictionary else { return  listPosts }
+        guard let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else { return  listPosts }
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -32,6 +32,4 @@ class TranslationImpl: Translation {
         
         return listPosts
     }
-    
-    
 }
