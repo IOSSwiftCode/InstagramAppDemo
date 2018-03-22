@@ -90,6 +90,28 @@ extension PosteTableViewController {
             }).disposed(by: disposeBag)
         
         
+        tableView.rx.didEndDragging
+        .withLatestFrom(self.tableView.rx.contentOffset)
+        .filter { [weak self] _ in
+            return (self?.tableView.isNearBottomEdge(edgeOffset: 0))!
+        }
+        .do(onNext: { [weak self] _ in
+            self?.addLoadingToPagination()
+        })
+        .subscribe { [weak self] _ in
+            print("Call Pagination")
+            self?.viewModel.listPostsWithPagination()
+        }.disposed(by: disposeBag)
+        
+        viewModel.pagination.asObservable()
+        .filter { (page) in
+            return page?.nextURL == nil
+        }
+        .do(onNext: { [weak self] _ in
+            self?.loadingIndicator.stopAnimating()
+        })
+        .subscribe().disposed(by: disposeBag)
+        
     }
 }
 
@@ -129,9 +151,16 @@ extension PosteTableViewController {
     }
     
     private func addLoadingToPagination() {
-        loadingIndicator.center = (tableView.tableFooterView?.center)!
-        loadingIndicator.startAnimating()
+        
+        loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        loadingIndicator.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
         tableView.tableFooterView = loadingIndicator
+        
+        tableView.tableFooterView?.isHidden = false
+        
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.startAnimating()
+        loadingIndicator.center = (tableView.tableFooterView?.center)!
     }
 }
 
