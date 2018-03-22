@@ -12,26 +12,35 @@ import RxCocoa
 
 class PosteTableViewController: UIViewController {
     
-    private var viewModel: PostTableViewModel!
+    private let viewModel: PostTableViewModel
     private var tableView: UITableView!
     
     private let refreshControl = UIRefreshControl()
-    private var loadingIndicator : LoadingIndicatorView!
+    private var loadingIndicator : UIActivityIndicatorView!
     
     private let disposeBag = DisposeBag()
     
+    private var isConnecting: Bool!
     
+    init(viewModel: PostTableViewModel) {
+        
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.backgroundColor = .white
         
-        viewModel = PostTableViewModel(networkLayer: NetworkImpl(), translationLayer: TranslationImpl())
-
         addNavigationItems()
-        createIndicatorLoading()
         configureTableView()
+        createIndicatorLoading()
         bindDataToTableView()
         tableViewCellDidSelected()
     }
@@ -55,12 +64,14 @@ extension PosteTableViewController {
     
     private func bindDataToTableView() {
         viewModel.posts.asObservable()
-        .filter { [weak self] post in
+        .filter({ post in
+            return post.count > 0
+        })
+        .do(onNext: { [weak self] post in
             if post.count > 0 {
-                self?.loadingIndicator.stopIndicatorLoading()
+                self?.loadingIndicator.stopAnimating()
             }
-            return true
-        }
+        })
         .bind(to: tableView.rx.items(cellIdentifier: PostTableViewCell.cellId, cellType: PostTableViewCell.self)) {
             row, element, cell in
             
@@ -77,6 +88,8 @@ extension PosteTableViewController {
                 detailVC.viewModel = PostDetailViewModel(post: post!)
                 self?.navigationController?.pushViewController(detailVC, animated: true)
             }).disposed(by: disposeBag)
+        
+        
     }
 }
 
@@ -104,11 +117,21 @@ extension PosteTableViewController {
     
     private func createIndicatorLoading() {
         
-        loadingIndicator = LoadingIndicatorView(frame: view.frame)
+        loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         
-        view.addSubview(loadingIndicator)
+        loadingIndicator.center = self.view.center
         
-        loadingIndicator.startIndicatorLoading()
+        loadingIndicator.hidesWhenStopped = true
+        
+        self.view.addSubview(loadingIndicator)
+        
+        loadingIndicator.startAnimating()
+    }
+    
+    private func addLoadingToPagination() {
+        loadingIndicator.center = (tableView.tableFooterView?.center)!
+        loadingIndicator.startAnimating()
+        tableView.tableFooterView = loadingIndicator
     }
 }
 

@@ -20,7 +20,7 @@ class ReachabilityCheck: NSObject {
     
     private let internetStatus = PublishSubject<Bool>()
     
-    private var isNetworkAvailable: Bool {
+    var isConnectionAvailable: Bool {
         return reachabilityStatus != .none
     }
     
@@ -32,27 +32,26 @@ class ReachabilityCheck: NSObject {
         
         let reachability = notification.object as! Reachability
         
-        // Check existing object
         switch reachability.connection {
             
         case .wifi:
             reachabilityStatus = .wifi
-            internetStatus.onNext(isNetworkAvailable)
-            debugPrint("Internet Connection via wifi ", isNetworkAvailable)
+            internetStatus.onNext(isConnectionAvailable)
+            debugPrint("Internet Connection via wifi ", isConnectionAvailable)
             
         case .cellular:
             reachabilityStatus = .cellular
-            internetStatus.onNext(isNetworkAvailable)
-            debugPrint("Internet Connection cellular", isNetworkAvailable)
+            internetStatus.onNext(isConnectionAvailable)
+            debugPrint("Internet Connection cellular", isConnectionAvailable)
             
         case .none:
             reachabilityStatus = .none
-            internetStatus.onNext(isNetworkAvailable)
-            print("Internet Connection", isNetworkAvailable)
+            internetStatus.onNext(isConnectionAvailable)
+            print("Internet Connection", isConnectionAvailable)
         }
     }
     
-    //TODO: Start Monitoring wifi
+    //TODO: Start Monitoring connection
     func startMonitoring() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.reachabilityChanged),
@@ -67,7 +66,7 @@ class ReachabilityCheck: NSObject {
         }
     }
     
-    //TODO: Stop Monitoring wifi
+    //TODO: Stop Monitoring connection
     func stopMonitoring() {
         
         reachability.stopNotifier()

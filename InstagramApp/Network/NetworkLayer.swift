@@ -8,16 +8,26 @@
 
 import Foundation
 import Alamofire
+import RxSwift
+
+typealias completedHandler = (Data?) -> Void
 
 protocol Network {
-    func listPostsFromServer(url: String, param: [String: Any], completed: @escaping (Data) -> Void)
+    
+    func requestData(url: String, param: [String: Any], completed: @escaping completedHandler)
 }
 
 class NetworkImpl: Network {
     
-    let header: HTTPHeaders = ["Accept": "application/json"]
+    private let header: HTTPHeaders = ["Accept": "application/json"]
     
-    func listPostsFromServer(url: String, param: [String: Any], completed: @escaping (Data) -> Void) {
+    func requestData(url: String, param: [String : Any], completed: @escaping completedHandler) {
+        listPostsFromServer(url: url, param: param) { (data) in
+            completed(data)
+        }
+    }
+    
+    func listPostsFromServer(url: String, param: [String: Any], completed: @escaping (Data?) -> Void) {
         
         let paramater: Parameters = param
         
@@ -31,4 +41,31 @@ class NetworkImpl: Network {
         }
     }
 }
+
+class ProxyNetWrok: NSObject, Network {
+    
+    private var network : Network!
+    
+    private let disposeBag = DisposeBag()
+
+    init(network: Network) {
+        super.init()
+        
+        self.network = network
+
+    }
+    
+    func requestData(url: String, param: [String : Any], completed: @escaping completedHandler) {
+        
+        if ReachabilityCheck.shared.isConnectionAvailable {
+            network.requestData(url: url, param: param, completed: { (data) in
+                completed(data)
+            })
+        } else {
+            completed(nil)
+        }
+    }
+}
+
+
 
