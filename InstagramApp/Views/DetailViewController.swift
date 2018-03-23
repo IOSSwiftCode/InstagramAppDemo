@@ -13,9 +13,10 @@ import RxSwift
 class DetailViewController: UIViewController {
     
     private var tableView : UITableView!
-    let disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
+    private var post : Post!
+    
     var viewModel : PostDetailViewModel!
-    var post : Post!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +30,7 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController {
     
+    //MARK: CONFIGURE TABLE VIEW
     private func configureTableView() {
         
         tableView = UITableView(frame: self.view.frame)
@@ -40,6 +42,7 @@ extension DetailViewController {
         tableView.rowHeight = 480
     }
     
+    //MARK: BIND DATA TO TABLE VIEW
     private func bindDataToTableView() {
         viewModel.getPost
             .bind(to: tableView.rx.items(cellIdentifier: PostTableViewCell.cellId, cellType: PostTableViewCell.self)) {

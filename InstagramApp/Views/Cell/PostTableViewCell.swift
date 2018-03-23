@@ -34,36 +34,42 @@ class PostTableViewCell: UITableViewCell {
 
 extension PostTableViewCell {
     
+    //MARK: ADD DATA TO VIEW COMPONENT
     func configure(with model: Post) {
         
         viewModel = PostCellViewModel(post: model)
         
-        profileImage.cornerRadius()
         profileImage.kf.setImage(with: viewModel.profileImage)
         postedImgae.kf.setImage(with: viewModel.postImgae)
         usernameLabel.text = viewModel.username
         likedLabel.text = viewModel.like
         commets.setTitle(viewModel.comment, for: .normal)
         postedDurationLable.text = viewModel.duration
+        
+        // IMGAGE CORNER RADIUS
+        profileImage.cornerRadius()
     }
-
 }
 
 //MARK: - Helper Methods
 extension PostTableViewCell {
     
+    //MARK: RETURN TABLEVIEW CELL ID
     public static var cellId: String {
         return "PostTableViewCell"
     }
     
+    //MARK: RETURN CELL BUNDLE ID
     public static var bundle: Bundle {
         return Bundle(for: PostTableViewCell.self)
     }
     
+    //MARK: RETURN CELL NIB FILE
     public static var nib: UINib {
         return UINib(nibName: PostTableViewCell.cellId, bundle: PostTableViewCell.bundle)
     }
     
+    //MARK: REGISTER CELL WITH TABLEVIEW
     public static func register(with tableView: UITableView) {
         tableView.register(PostTableViewCell.nib, forCellReuseIdentifier: PostTableViewCell.cellId)
     }

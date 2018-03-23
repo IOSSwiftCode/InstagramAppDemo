@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         ReachabilityCheck.shared.startMonitoring()
 
-        let proxyNetwork = ProxyNetWrok(network: NetworkImpl())
+        let proxyNetwork = NetwrokProxy(network: NetworkImpl())
         let translate = TranslationImpl()
         
         let viewModel = PostTableViewModel(networkLayer: proxyNetwork, translationLayer: translate)
@@ -32,26 +32,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         
         return true
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-//        ReachabilityCheck.shared.stopMonitoring()
-        print("applicationWillResignActive")
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-//         ReachabilityCheck.shared.stopMonitoring()
-        print("applicationDidEnterBackground")
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-//        ReachabilityCheck.shared.stopMonitoring()
-        print("applicationWillEnterForeground")
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-//         ReachabilityCheck.shared.startMonitoring()
-        print("applicationDidBecomeActive")
     }
     
     func applicationWillTerminate(_ application: UIApplication) {

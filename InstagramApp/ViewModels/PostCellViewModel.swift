@@ -43,14 +43,17 @@ class PostCellViewModel {
 
 extension PostCellViewModel {
     
+    //MARK: RETURN NUMBER LIKES AS STRING
     private func likeCount(like: Int) -> String {
         return like > 0 ? "\(like) Likes" : "\(like) Like"
     }
     
+    //MARK: RETURN NUMBER COMMENT AS STRING
     private func commentCount(comment: Int) -> String {
         return comment > 0 ? "\(comment) Comments" : "\(comment) Comment"
     }
     
+    //MARK: RETURN POSTED PEROID AS STRING
     private func stringFromDate(date: Date) -> String {
         
         let dateFormatter = DateFormatter()

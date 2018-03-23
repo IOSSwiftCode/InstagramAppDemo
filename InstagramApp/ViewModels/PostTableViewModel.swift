@@ -10,15 +10,13 @@ import Foundation
 import RxSwift
 
 class PostTableViewModel: NSObject {
-    
-//    private var listPosts : ListPosts?
+
     private var networkLayer: Network?
     private var translationLayer: Translation?
     private let disposeBag = DisposeBag()
     
     let posts = Variable<[Post]>([])
     var pagination = Variable<Pagination?>(nil)
-    
     
     init(networkLayer: Network, translationLayer: Translation) {
         
@@ -27,6 +25,7 @@ class PostTableViewModel: NSObject {
         self.networkLayer = networkLayer
         self.translationLayer = translationLayer
         
+        //MARK: SUBSCRIBE TO REACHABILITY
         ReachabilityCheck.shared.isInternetAvailable.subscribe(onNext: { [weak self] (status) in
             guard status else {
                 return
@@ -39,6 +38,7 @@ class PostTableViewModel: NSObject {
 
 extension PostTableViewModel {
     
+    //MARK: GET LIST POSTS
     private func listAllPosts() {
 
         let url = BaseURL.Post.getData.value
@@ -54,16 +54,16 @@ extension PostTableViewModel {
             guard let listPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
                 return
             }
-            
-//            self?.listPosts = listPosts
             self?.posts.value = listPosts.data!
             self?.pagination.value = listPosts.pagination
         })
     }
     
+    //MARK: GET MORE POSTS PAGINATION
     func listPostsWithPagination() {
         
         guard let url = pagination.value?.nextURL else {
+            self.pagination.value = nil
             return
         }
         
@@ -75,19 +75,19 @@ extension PostTableViewModel {
             guard let listPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
                 return
             }
-//            listPosts.data?.forEach({ (post) in
-//                self?.posts.value.append(post)
-//            })
+
             self?.posts.value.append(contentsOf: listPosts.data!)
             self?.pagination.value = listPosts.pagination
         })
     }
     
+    //MARK: DID SELECTED ROW
     func selectedRow(index: Int) -> Post {
         
         return posts.value[index]
     }
     
+    //MARK: PULL TO REFRESH
     func pullToRefresh() {
         listAllPosts()
     }

@@ -19,7 +19,7 @@ extension UIImageView {
 
 extension UIScrollView {
     
-    func  isNearBottomEdge(edgeOffset: CGFloat = 20.0) -> Bool {
+    func  isNearBottomEdge(edgeOffset: CGFloat) -> Bool {
         return self.contentOffset.y + self.frame.size.height + edgeOffset > self.contentSize.height
     }
     

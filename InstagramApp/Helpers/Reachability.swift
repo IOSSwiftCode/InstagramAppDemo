@@ -14,20 +14,21 @@ class ReachabilityCheck: NSObject {
     
     static let shared = ReachabilityCheck()
     
-    var isInternetAvailable: Observable<Bool> {
-        return internetStatus.asObservable()
-    }
-    
     private let internetStatus = PublishSubject<Bool>()
-    
-    var isConnectionAvailable: Bool {
-        return reachabilityStatus != .none
-    }
     
     private var reachabilityStatus: Reachability.Connection = .none
     
     private let reachability = Reachability()!
     
+    var isInternetAvailable: Observable<Bool> {
+        return internetStatus.asObservable()
+    }
+    
+    var isConnectionAvailable: Bool {
+        return reachabilityStatus != .none
+    }
+
+    //MARK: CHECK REACHABILITY
     @objc func reachabilityChanged(notification: Notification) {
         
         let reachability = notification.object as! Reachability
@@ -51,7 +52,7 @@ class ReachabilityCheck: NSObject {
         }
     }
     
-    //TODO: Start Monitoring connection
+    //MARK: Start Monitoring connection
     func startMonitoring() {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.reachabilityChanged),
@@ -66,7 +67,7 @@ class ReachabilityCheck: NSObject {
         }
     }
     
-    //TODO: Stop Monitoring connection
+    //MARK: Stop Monitoring connection
     func stopMonitoring() {
         
         reachability.stopNotifier()

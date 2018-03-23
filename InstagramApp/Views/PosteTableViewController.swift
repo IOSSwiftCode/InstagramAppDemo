@@ -19,8 +19,8 @@ class PosteTableViewController: UIViewController {
     private var loadingIndicator : UIActivityIndicatorView!
     
     private let disposeBag = DisposeBag()
-    
     private var isConnecting: Bool!
+    
     
     init(viewModel: PostTableViewModel) {
         
@@ -33,6 +33,7 @@ class PosteTableViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,12 +43,12 @@ class PosteTableViewController: UIViewController {
         configureTableView()
         createIndicatorLoading()
         bindDataToTableView()
-        tableViewCellDidSelected()
     }
 }
 
 extension PosteTableViewController {
     
+    //MARK: CONFIGURE TABLE VIEW
     private func configureTableView() {
         
         tableView = UITableView(frame: self.view.frame)
@@ -62,9 +63,13 @@ extension PosteTableViewController {
         refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
     }
     
+    //MARK: BIND DATA TO TABLE VIEW
     private func bindDataToTableView() {
+        
+        //MARK: BINDING DATA
         viewModel.posts.asObservable()
-        .filter({ post in
+        .filter({ [weak self] post in
+            self?.loadingIndicator.startAnimating()
             return post.count > 0
         })
         .do(onNext: { [weak self] post in
@@ -78,9 +83,9 @@ extension PosteTableViewController {
             cell.configure(with: element)
             
         }.disposed(by: disposeBag)
-    }
-    
-    private func tableViewCellDidSelected() {
+
+        
+        //MARK: SUBSCRIPT TO TABLEVIEW ITEMSELECTED FTO SHOW DETAIL
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
                 let post = self?.viewModel.selectedRow(index: indexPath.row)
@@ -90,34 +95,41 @@ extension PosteTableViewController {
             }).disposed(by: disposeBag)
         
         
+        //MARK: SUBSCRIPT TO TABLEVIEW SCROLL FOR GET MORE PAGINATION
         tableView.rx.didEndDragging
         .withLatestFrom(self.tableView.rx.contentOffset)
         .filter { [weak self] _ in
-            return (self?.tableView.isNearBottomEdge(edgeOffset: 0))!
+            return (self?.tableView.isNearBottomEdge(edgeOffset: 20))!
         }
+        .debounce(0.5, scheduler: MainScheduler.instance)
         .do(onNext: { [weak self] _ in
-            self?.addLoadingToPagination()
+            self?.addLoadingToTableFooter()
         })
         .subscribe { [weak self] _ in
             print("Call Pagination")
             self?.viewModel.listPostsWithPagination()
         }.disposed(by: disposeBag)
         
+        
+        //MARK: SUBSCRIPT TO PAGINATION FOR ANY UPDATE
         viewModel.pagination.asObservable()
-        .filter { (page) in
+        .skip(1)
+        .skipWhile({ (page) in
+            return page == nil
+        })
+        .filter {  (page) in
             return page?.nextURL == nil
         }
         .do(onNext: { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
-        })
-        .subscribe().disposed(by: disposeBag)
-        
+        }).subscribe().disposed(by: disposeBag)
     }
 }
 
-//MARK: ADD NAVIGATION ITEM
+//MARK: ADD SOME SUBVIEW TO VIEW CONTROLLER
 extension PosteTableViewController {
     
+    //MARK: ADD NAVIGATION ITEMS
     private func addNavigationItems() {
         
         self.navigationController?.navigationBar.topItem?.title = "Instagram"
@@ -132,36 +144,32 @@ extension PosteTableViewController {
         self.navigationItem.rightBarButtonItem = rightItem
     }
     
+    //MARK: PULL TO REFRESH
     @objc private func pullToRefresh() {
         viewModel.pullToRefresh()
         refreshControl.endRefreshing()
     }
     
+    //MARK: ADD LOADING INDICATOR TO VIEW WHEN FIRST LOADING
     private func createIndicatorLoading() {
         
         loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
-        
         loadingIndicator.center = self.view.center
-        
         loadingIndicator.hidesWhenStopped = true
-        
-        self.view.addSubview(loadingIndicator)
-        
         loadingIndicator.startAnimating()
+        self.view.addSubview(loadingIndicator)
     }
     
-    private func addLoadingToPagination() {
+    //MARK: ADD LOADING INDICATOR TO TABLEVIEW FOOTER
+    private func addLoadingToTableFooter() {
         
         loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         loadingIndicator.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
-        tableView.tableFooterView = loadingIndicator
-        
-        tableView.tableFooterView?.isHidden = false
-        
-        loadingIndicator.hidesWhenStopped = true
         loadingIndicator.startAnimating()
-        loadingIndicator.center = (tableView.tableFooterView?.center)!
+        loadingIndicator.hidesWhenStopped = true
+        
+        tableView.tableFooterView = loadingIndicator
+        tableView.tableFooterView?.isHidden = false
     }
 }
-
 

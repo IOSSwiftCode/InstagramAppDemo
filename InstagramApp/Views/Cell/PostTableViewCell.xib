@@ -130,7 +130,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YbJ-Z9-i5c">
                                         <rect key="frame" x="66" y="0.0" width="23" height="23"/>
-                                        <state key="normal" backgroundImage="sent-1"/>
+                                        <state key="normal" backgroundImage="sent"/>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -187,10 +187,10 @@
     </objects>
     <resources>
         <image name="Instagram" width="500" height="141"/>
-        <image name="bookmark" width="50" height="50"/>
-        <image name="comment" width="50" height="50"/>
-        <image name="heart" width="50" height="50"/>
-        <image name="more" width="50" height="50"/>
-        <image name="sent-1" width="50" height="50"/>
+        <image name="bookmark" width="16" height="16"/>
+        <image name="comment" width="16" height="16"/>
+        <image name="heart" width="16" height="16"/>
+        <image name="more" width="16" height="16"/>
+        <image name="sent" width="33" height="33"/>
     </resources>
 </document>

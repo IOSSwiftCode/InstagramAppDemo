@@ -18,22 +18,11 @@ protocol Network {
     func listPostPagiation(url: String, completed: @escaping completedHandler)
 }
 
-class NetworkImpl: Network {
+class NetworkImpl {
     
     private let header: HTTPHeaders = ["Accept": "application/json"]
     
-    func requestData(url: String, param: [String : Any]?, completed: @escaping completedHandler) {
-        listPostsFromServer(url: url, param: param) { (data) in
-            completed(data)
-        }
-    }
-    
-    func listPostPagiation(url: String, completed: @escaping completedHandler) {
-        listPostsFromServer(url: url, param: nil) { (data) in
-            completed(data)
-        }
-    }
-    
+    //MARK: REQUEST DATA FROM SERVER
     private func listPostsFromServer(url: String, param: [String: Any]?, completed: @escaping (Data?) -> Void) {
         
         let paramater: Parameters? = param
@@ -49,38 +38,23 @@ class NetworkImpl: Network {
     }
 }
 
-class ProxyNetWrok: NSObject, Network {
+//MARK: COMFIRM NETWORK PROTOCOL AND IMPLEMENT METHOD
+extension NetworkImpl: Network {
     
-    private var network : Network!
-    
-    private let disposeBag = DisposeBag()
-
-    init(network: Network) {
-        super.init()
-        
-        self.network = network
-    }
-    
+    //MARK: CALLED REQUEST DATA WITHIN PARAMETER
     func requestData(url: String, param: [String : Any]?, completed: @escaping completedHandler) {
-        
-        if ReachabilityCheck.shared.isConnectionAvailable {
-            network.requestData(url: url, param: param, completed: { (data) in
-                completed(data)
-            })
-        } else {
-            completed(nil)
+        listPostsFromServer(url: url, param: param) { (data) in
+            completed(data)
         }
     }
     
+    //MARK: CALLED REQUEST DATA FOR PAGINATION
     func listPostPagiation(url: String, completed: @escaping completedHandler) {
-        if ReachabilityCheck.shared.isConnectionAvailable {
-            network.listPostPagiation(url: url, completed: { (data) in
-                completed(data)
-            })
-        } else {
-            completed(nil)
+        listPostsFromServer(url: url, param: nil) { (data) in
+            completed(data)
         }
     }
+    
 }
 
 
