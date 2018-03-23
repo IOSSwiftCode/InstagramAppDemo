@@ -106,7 +106,6 @@ extension PosteTableViewController {
             self?.addLoadingToTableFooter()
         })
         .subscribe { [weak self] _ in
-            print("Call Pagination")
             self?.viewModel.listPostsWithPagination()
         }.disposed(by: disposeBag)
         
@@ -123,6 +122,15 @@ extension PosteTableViewController {
         .do(onNext: { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
         }).subscribe().disposed(by: disposeBag)
+        
+        //MARK: SUBSCRIPT DEVICE ORIENTATION EVENT
+        rx.sentMessage(#selector(self.viewWillTransition(to:with:)))
+            .map({ (params) in
+                return params[0] as! CGSize
+            })
+            .subscribe(onNext: { [weak self] (size) in
+                self?.tableView.frame.size = size
+            }).disposed(by: disposeBag)
     }
 }
 
@@ -171,5 +179,6 @@ extension PosteTableViewController {
         tableView.tableFooterView = loadingIndicator
         tableView.tableFooterView?.isHidden = false
     }
+ 
 }
 

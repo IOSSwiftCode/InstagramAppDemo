@@ -29,8 +29,6 @@ class NetworkImpl {
         
         Alamofire.request(url, method: .get, parameters: paramater, encoding: URLEncoding.queryString, headers: header).responseJSON { response in
             
-            print(response.data as Any)
-            
             guard let data = response.data else { return }
             
             completed(data)
