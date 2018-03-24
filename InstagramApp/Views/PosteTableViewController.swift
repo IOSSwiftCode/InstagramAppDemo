@@ -14,12 +14,13 @@ class PosteTableViewController: UIViewController {
     
     private let viewModel: PostTableViewModel
     private var tableView: UITableView!
-    
-    private let refreshControl = UIRefreshControl()
+
+    private var isConnecting: Bool!
     private var loadingIndicator : UIActivityIndicatorView!
     
     private let disposeBag = DisposeBag()
-    private var isConnecting: Bool!
+    private lazy var refreshControl = UIRefreshControl()
+    
     
     
     init(viewModel: PostTableViewModel) {
@@ -67,17 +68,15 @@ extension PosteTableViewController {
     private func bindDataToTableView() {
         
         //MARK: BINDING DATA
-        viewModel.posts.asObservable()
+        viewModel.posts.asDriver()
         .filter({ [weak self] post in
-            self?.loadingIndicator.startAnimating()
             return post.count > 0
         })
         .do(onNext: { [weak self] post in
-            if post.count > 0 {
-                self?.loadingIndicator.stopAnimating()
-            }
+            self?.loadingIndicator.stopAnimating()
+            self?.refreshControl.endRefreshing()
         })
-        .bind(to: tableView.rx.items(cellIdentifier: PostTableViewCell.cellId, cellType: PostTableViewCell.self)) {
+        .drive(tableView.rx.items(cellIdentifier: PostTableViewCell.cellId, cellType: PostTableViewCell.self)) {
             row, element, cell in
             
             cell.configure(with: element)
@@ -97,15 +96,17 @@ extension PosteTableViewController {
         
         //MARK: SUBSCRIPT TO TABLEVIEW SCROLL FOR GET MORE PAGINATION
         tableView.rx.didEndDragging
-        .withLatestFrom(self.tableView.rx.contentOffset)
-        .filter { [weak self] _ in
-            return (self?.tableView.isNearBottomEdge(edgeOffset: 20))!
-        }
         .debounce(0.5, scheduler: MainScheduler.instance)
+        .withLatestFrom(self.tableView.rx.contentOffset)
+        
+        .filter { [weak self] _ in
+            return (self?.tableView.isNearBottomEdge(edgeOffset: 40))!
+        }
         .do(onNext: { [weak self] _ in
             self?.addLoadingToTableFooter()
         })
         .subscribe { [weak self] _ in
+            print("didEndDragging")
             self?.viewModel.listPostsWithPagination()
         }.disposed(by: disposeBag)
         
@@ -121,10 +122,11 @@ extension PosteTableViewController {
         }
         .do(onNext: { [weak self] _ in
             self?.loadingIndicator.stopAnimating()
+            print("pagination")
         }).subscribe().disposed(by: disposeBag)
         
         //MARK: SUBSCRIPT DEVICE ORIENTATION EVENT
-        rx.sentMessage(#selector(self.viewWillTransition(to:with:)))
+        self.rx.sentMessage(#selector(self.viewWillTransition(to:with:)))
             .map({ (params) in
                 return params[0] as! CGSize
             })
@@ -155,7 +157,6 @@ extension PosteTableViewController {
     //MARK: PULL TO REFRESH
     @objc private func pullToRefresh() {
         viewModel.pullToRefresh()
-        refreshControl.endRefreshing()
     }
     
     //MARK: ADD LOADING INDICATOR TO VIEW WHEN FIRST LOADING
@@ -163,21 +164,24 @@ extension PosteTableViewController {
         
         loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
         loadingIndicator.center = self.view.center
+        
+        self.view.addSubview(loadingIndicator)
+        
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.startAnimating()
-        self.view.addSubview(loadingIndicator)
     }
     
     //MARK: ADD LOADING INDICATOR TO TABLEVIEW FOOTER
     private func addLoadingToTableFooter() {
-        
+
         loadingIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
         loadingIndicator.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
-        loadingIndicator.startAnimating()
-        loadingIndicator.hidesWhenStopped = true
         
         tableView.tableFooterView = loadingIndicator
         tableView.tableFooterView?.isHidden = false
+        
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.startAnimating()
     }
  
 }

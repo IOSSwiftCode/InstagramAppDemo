@@ -15,19 +15,16 @@ typealias completedHandler = (Data?) -> Void
 protocol Network {
     
     func requestData(url: String, param: [String: Any]?, completed: @escaping completedHandler)
-    func listPostPagiation(url: String, completed: @escaping completedHandler)
 }
 
 class NetworkImpl {
-    
-    private let header: HTTPHeaders = ["Accept": "application/json"]
     
     //MARK: REQUEST DATA FROM SERVER
     private func listPostsFromServer(url: String, param: [String: Any]?, completed: @escaping (Data?) -> Void) {
         
         let paramater: Parameters? = param
         
-        Alamofire.request(url, method: .get, parameters: paramater, encoding: URLEncoding.queryString, headers: header).responseJSON { response in
+        Alamofire.request(url, method: .get, parameters: paramater, encoding: URLEncoding.queryString, headers: RequestHeader.header).responseJSON { response in
             
             guard let data = response.data else { return }
             
@@ -45,14 +42,6 @@ extension NetworkImpl: Network {
             completed(data)
         }
     }
-    
-    //MARK: CALLED REQUEST DATA FOR PAGINATION
-    func listPostPagiation(url: String, completed: @escaping completedHandler) {
-        listPostsFromServer(url: url, param: nil) { (data) in
-            completed(data)
-        }
-    }
-    
 }
 
 

@@ -51,6 +51,15 @@ extension DetailViewController {
                 cell.configure(with: element)
                 
             }.disposed(by: disposeBag)
+        
+        //MARK: SUBSCRIPT DEVICE ORIENTATION EVENT
+        self.rx.sentMessage(#selector(self.viewWillTransition(to:with:)))
+            .map({ (params) in
+                return params[0] as! CGSize
+            })
+            .subscribe(onNext: { [weak self] (size) in
+                self?.tableView.frame.size = size
+            }).disposed(by: disposeBag)
     }
     
 }

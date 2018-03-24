@@ -10,16 +10,14 @@ import Foundation
 import ObjectMapper
 
 protocol Translation {
-    func traslateJsonDataToPosts(_ data: Data) -> ListPosts?
+    func traslateJsonDataToPosts<T: Mappable>(_ data: Data) -> T?
 }
 
 class TranslationImpl: Translation {
     
     typealias dictionary = [String : Any]
     
-    func traslateJsonDataToPosts(_ data: Data) -> ListPosts? {
-        
-        var listPosts = ListPosts()
+    func traslateJsonDataToPosts<T: Mappable>(_ data: Data) -> T? {
         
         guard let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) else {
             return  nil
@@ -27,11 +25,11 @@ class TranslationImpl: Translation {
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
-                let posts = ListPosts(JSONString: jsonString)
-                listPosts = posts!
+                let posts = T(JSONString: jsonString)
+                return posts
             }
         }
         
-        return listPosts
+        return nil
     }
 }

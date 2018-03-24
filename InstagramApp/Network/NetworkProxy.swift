@@ -33,15 +33,4 @@ class NetwrokProxy: NSObject, Network {
             completed(nil)
         }
     }
-    
-    //MARK: IMPLEMENT METHOD FROM CONFIRMED PROTOCOL
-    func listPostPagiation(url: String, completed: @escaping completedHandler) {
-        if ReachabilityCheck.shared.isConnectionAvailable {
-            network.listPostPagiation(url: url, completed: { (data) in
-                completed(data)
-            })
-        } else {
-            completed(nil)
-        }
-    }
 }

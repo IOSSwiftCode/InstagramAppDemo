@@ -8,37 +8,35 @@
 
 import Foundation
 
-fileprivate protocol BaseURLConfigurationType {
-    static var baseURL : String { get }
+fileprivate protocol BaseURLConfig {
+    static var baseURL: String { get }
 }
 
 //MARK: PRODUCTION BASE URL
-fileprivate struct BaseURLProduction: BaseURLConfigurationType  {
+fileprivate struct ProductionURL: BaseURLConfig  {
     static var baseURL: String {
         return "https://api.instagram.com/v1/users/self/media/recent/"
     }
+    
+    
 }
 
 //MARK: CONFIGURE URL TYPE
-fileprivate struct BaseURLConfigurationFactory<T:BaseURLConfigurationType> {
+fileprivate struct BaseURLConfiguration<T:BaseURLConfig> {
     
-    private static var currentURL: String {
+    static var url: String {
         return T.baseURL
-    }
-    
-    static var active: String {
-        return currentURL
     }
 }
 
-fileprivate protocol BaseURLConfigurationActiveType {
+fileprivate protocol BaseURLActive {
     static var active: String! { get set }
 }
 
 //MARK: CONFIGURE BASE URL ACTIVE
-struct BaseURL: BaseURLConfigurationActiveType {
-    fileprivate typealias me = BaseURL
-    fileprivate static var active: String! = BaseURLConfigurationFactory<BaseURLProduction>.active
+struct BaseURL: BaseURLActive {
+    fileprivate typealias baseURL = BaseURL
+    fileprivate static var active: String! = BaseURLConfiguration<ProductionURL>.url
 }
 
 //MARK: BASE URL FOR GET POSTS
@@ -47,10 +45,10 @@ extension BaseURL {
         
         case getData
         
-        var value: String {
+        var url: String {
             switch self {
             case .getData:
-                return me.active
+                return baseURL.active
             }
         }
     }

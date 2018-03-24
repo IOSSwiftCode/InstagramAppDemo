@@ -31,3 +31,10 @@ struct Post: Mappable {
         createdTime    <- (map["created_time"], DateTransform())
     }
 }
+
+extension Post: Equatable{
+    
+    static func ==(lhs: Post, rhs: Post) -> Bool {
+        return true
+    }
+}

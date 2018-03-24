@@ -14,6 +14,7 @@ class PostTableViewModel: NSObject {
     private var networkLayer: Network?
     private var translationLayer: Translation?
     private let disposeBag = DisposeBag()
+    private let queue = DispatchQueue(label: "QueueFetchData")
     
     let posts = Variable<[Post]>([])
     var pagination = Variable<Pagination?>(nil)
@@ -41,19 +42,18 @@ extension PostTableViewModel {
     //MARK: GET LIST POSTS
     private func listAllPosts() {
 
-        let url = BaseURL.Post.getData.value
-        let param = ["access_token" : "2305280051.c61562d.173fac7d5397411ab13207bf5abda620",
-                     "count" : 3] as [String : Any]
+        let url = BaseURL.Post.getData.url
         
-        networkLayer?.requestData(url: url, param: param, completed: { [weak self] (data) in
+        networkLayer?.requestData(url: url, param:RequestParameter.param, completed: { [weak self] (data) in
             
             guard let data = data else {
                 return
             }
             
-            guard let listPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
+            guard let listPosts: ListPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
                 return
             }
+            
             self?.posts.value = listPosts.data!
             self?.pagination.value = listPosts.pagination
         })
@@ -62,22 +62,29 @@ extension PostTableViewModel {
     //MARK: GET MORE POSTS PAGINATION
     func listPostsWithPagination() {
         
+        queue.sync {
+            self.fetchPosts()
+        }
+    }
+    
+    fileprivate func fetchPosts() {
         guard let url = pagination.value?.nextURL else {
             self.pagination.value = nil
             return
         }
         
-        networkLayer?.listPostPagiation(url: url, completed: { [weak self] (data) in
+        networkLayer?.requestData(url: url, param: nil, completed: { [weak self] (data) in
             guard let data = data else {
                 return
             }
             
-            guard let listPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
+            guard let listPosts: ListPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
                 return
             }
-
+            
             self?.posts.value.append(contentsOf: listPosts.data!)
             self?.pagination.value = listPosts.pagination
+            
         })
     }
     

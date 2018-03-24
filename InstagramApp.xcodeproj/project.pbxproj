@@ -31,6 +31,7 @@
 		3A7EBC2D2060E8730081669E /* TranslationLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7EBC2C2060E8730081669E /* TranslationLayer.swift */; };
 		3A7EBC302060F45A0081669E /* PostTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7EBC2F2060F45A0081669E /* PostTableViewModel.swift */; };
 		3A7EBC332060FF2E0081669E /* BaseURLConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7EBC322060FF2E0081669E /* BaseURLConfigure.swift */; };
+		3A9E7D4D2065E8EF00F63362 /* HTTPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A9E7D4C2065E8EF00F63362 /* HTTPRequest.swift */; };
 		3AA9E5692062B9730028D9C8 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA9E5682062B9730028D9C8 /* Reachability.swift */; };
 		3AD778D32064FCF5009E12DD /* NetworkProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD778D22064FCF5009E12DD /* NetworkProxy.swift */; };
 /* End PBXBuildFile section */
@@ -73,6 +74,7 @@
 		3A7EBC2C2060E8730081669E /* TranslationLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationLayer.swift; sourceTree = "<group>"; };
 		3A7EBC2F2060F45A0081669E /* PostTableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewModel.swift; sourceTree = "<group>"; };
 		3A7EBC322060FF2E0081669E /* BaseURLConfigure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURLConfigure.swift; sourceTree = "<group>"; };
+		3A9E7D4C2065E8EF00F63362 /* HTTPRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPRequest.swift; sourceTree = "<group>"; };
 		3AA9E5682062B9730028D9C8 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		3AD778D22064FCF5009E12DD /* NetworkProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProxy.swift; sourceTree = "<group>"; };
 		4FC672FF856C6AB93DC9E010 /* Pods_InstagramApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstagramApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +183,7 @@
 			children = (
 				3A7EBC262060E0610081669E /* NetworkImpl.swift */,
 				3AD778D22064FCF5009E12DD /* NetworkProxy.swift */,
+				3A9E7D4C2065E8EF00F63362 /* HTTPRequest.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -497,6 +500,7 @@
 				3A7EBC2D2060E8730081669E /* TranslationLayer.swift in Sources */,
 				3AA9E5692062B9730028D9C8 /* Reachability.swift in Sources */,
 				3A7EBC332060FF2E0081669E /* BaseURLConfigure.swift in Sources */,
+				3A9E7D4D2065E8EF00F63362 /* HTTPRequest.swift in Sources */,
 				3A49476E2060011D00DF719C /* PosteTableViewController.swift in Sources */,
 				3A7EBC2B2060E6FF0081669E /* ListPosts.swift in Sources */,
 			);
