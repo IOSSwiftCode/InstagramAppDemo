@@ -11,8 +11,8 @@ import RxSwift
 
 class PostTableViewModel: NSObject {
 
-    private var networkLayer: Network?
-    private var translationLayer: Translation?
+    private let networkLayer: Network
+    private let translationLayer: Translation
     private let disposeBag = DisposeBag()
     private let queue = DispatchQueue(label: "QueueFetchData")
     
@@ -21,11 +21,11 @@ class PostTableViewModel: NSObject {
     
     init(networkLayer: Network, translationLayer: Translation) {
         
-        super.init()
-        
         self.networkLayer = networkLayer
         self.translationLayer = translationLayer
         
+        super.init()
+
         //MARK: SUBSCRIBE TO REACHABILITY
         ReachabilityCheck.shared.isInternetAvailable.subscribe(onNext: { [weak self] (status) in
             guard status else {
@@ -44,13 +44,13 @@ extension PostTableViewModel {
 
         let url = BaseURL.Post.getData.url
         
-        networkLayer?.requestData(url: url, param:RequestParameter.param, completed: { [weak self] (data) in
+        networkLayer.requestData(url: url, param:RequestParameter.param, completed: { [weak self] (data) in
             
             guard let data = data else {
                 return
             }
             
-            guard let listPosts: ListPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
+            guard let listPosts: ListPosts = self?.translationLayer.traslateJsonDataToPosts(data) else {
                 return
             }
             
@@ -73,12 +73,12 @@ extension PostTableViewModel {
             return
         }
         
-        networkLayer?.requestData(url: url, param: nil, completed: { [weak self] (data) in
+        networkLayer.requestData(url: url, param: nil, completed: { [weak self] (data) in
             guard let data = data else {
                 return
             }
             
-            guard let listPosts: ListPosts = self?.translationLayer?.traslateJsonDataToPosts(data) else {
+            guard let listPosts: ListPosts = self?.translationLayer.traslateJsonDataToPosts(data) else {
                 return
             }
             
