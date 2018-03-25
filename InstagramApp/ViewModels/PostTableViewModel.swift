@@ -82,8 +82,14 @@ extension PostTableViewModel {
                 return
             }
             
-            self?.posts.value.append(contentsOf: listPosts.data!)
-            self?.pagination.value = listPosts.pagination
+            listPosts.data?.forEach({ (post) in
+                if !(self?.posts.value.contains(post))! {
+                    self?.posts.value.append(post)
+                    self?.pagination.value = listPosts.pagination
+                }
+            })
+//            self?.posts.value.append(contentsOf: listPosts.data!)
+//            self?.pagination.value = listPosts.pagination
             
         })
     }

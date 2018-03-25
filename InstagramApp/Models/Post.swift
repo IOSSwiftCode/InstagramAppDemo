@@ -11,6 +11,7 @@ import ObjectMapper
 
 struct Post: Mappable {
     
+    var id : String?
     var user: User?
     var postImgae: PostImage?
     var like: Like?
@@ -23,6 +24,7 @@ struct Post: Mappable {
     init() {}
     
     mutating func mapping(map: Map) {
+        id             <- map["id"]
         user           <- map["user"]
         postImgae      <- map["images.low_resolution"]
         desc           <- map["caption"]
@@ -35,6 +37,6 @@ struct Post: Mappable {
 extension Post: Equatable{
     
     static func ==(lhs: Post, rhs: Post) -> Bool {
-        return true
+        return lhs.id == rhs.id
     }
 }
