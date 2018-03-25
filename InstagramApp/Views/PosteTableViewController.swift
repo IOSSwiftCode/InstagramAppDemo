@@ -69,7 +69,7 @@ extension PosteTableViewController {
         
         //MARK: BINDING DATA
         viewModel.posts.asDriver()
-        .filter({ [weak self] post in
+        .filter({ post in
             return post.count > 0
         })
         .do(onNext: { [weak self] post in

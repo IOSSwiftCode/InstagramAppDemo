@@ -9,7 +9,6 @@ PODS:
   - RxCocoa (4.1.2):
     - RxSwift (~> 4.0)
   - RxSwift (4.1.2)
-  - SnapKit (4.0.0)
 
 DEPENDENCIES:
   - AlamofireObjectMapper (~> 5.0)
@@ -17,7 +16,6 @@ DEPENDENCIES:
   - ReachabilitySwift
   - RxCocoa (~> 4.0)
   - RxSwift (~> 4.0)
-  - SnapKit (~> 4.0.0)
 
 SPEC CHECKSUMS:
   Alamofire: 907e0a98eb68cdb7f9d1f541a563d6ac5dc77b25
@@ -27,8 +25,7 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
   RxSwift: e49536837d9901277638493ea537394d4b55f570
-  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
 
-PODFILE CHECKSUM: 22763d751d12d1bbcb27aad820d0ad1e8a62d17e
+PODFILE CHECKSUM: 08d210564d03cac3b1701ec626619cd8ee489389
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0.rc.1
