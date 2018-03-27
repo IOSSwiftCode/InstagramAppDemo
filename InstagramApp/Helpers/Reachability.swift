@@ -38,14 +38,15 @@ class ReachabilityCheck: NSObject {
         case .wifi:
             reachabilityStatus = .wifi
             internetStatus.onNext(isConnectionAvailable)
-            
+            print("wifi", isConnectionAvailable)
         case .cellular:
             reachabilityStatus = .cellular
             internetStatus.onNext(isConnectionAvailable)
-            
+            print("cellular",isConnectionAvailable)
         case .none:
             reachabilityStatus = .none
             internetStatus.onNext(isConnectionAvailable)
+           print("none", isConnectionAvailable)
         }
     }
     

@@ -20,20 +20,19 @@ class PosteTableViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     private lazy var refreshControl = UIRefreshControl()
-    
-    
+  
     
     init(viewModel: PostTableViewModel) {
         
         self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
+
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
+    }    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +43,9 @@ class PosteTableViewController: UIViewController {
         configureTableView()
         createIndicatorLoading()
         bindDataToTableView()
+      
     }
+
 }
 
 extension PosteTableViewController {
@@ -70,6 +71,7 @@ extension PosteTableViewController {
         //MARK: BINDING DATA
         viewModel.posts.asDriver()
         .filter({ post in
+
             return post.count > 0
         })
         .do(onNext: { [weak self] post in
@@ -82,7 +84,7 @@ extension PosteTableViewController {
             cell.configure(with: element)
             
         }.disposed(by: disposeBag)
-
+      
         
         //MARK: SUBSCRIPT TO TABLEVIEW ITEMSELECTED FTO SHOW DETAIL
         tableView.rx.itemSelected
@@ -103,7 +105,9 @@ extension PosteTableViewController {
             return (self?.tableView.isNearBottomEdge(edgeOffset: 40))!
         }
         .do(onNext: { [weak self] _ in
+          if ReachabilityCheck.shared.isConnectionAvailable {
             self?.addLoadingToTableFooter()
+          }
         })
         .subscribe { [weak self] _ in
             print("didEndDragging")
@@ -183,6 +187,6 @@ extension PosteTableViewController {
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.startAnimating()
     }
- 
+   
 }
 
